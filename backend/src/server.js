@@ -7,6 +7,7 @@ const authRoutes = require('./routes/authRoutes');
 const clienteRoutes = require('./routes/clienteRoutes');
 const petRoutes = require('./routes/petRoutes');
 const agendamentoRoutes = require('./routes/agendamentoRoutes');
+const { notFoundHandler, errorHandler } = require('./middlewares/errorHandler');
 
 const app = express();
 
@@ -21,6 +22,9 @@ app.use('/api/agendamentos', agendamentoRoutes);
 app.get('/', (req, res) => {
     res.send('Servidor do PetShop rodando e conectado!');
 });
+
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 

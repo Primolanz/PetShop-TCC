@@ -2,16 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const authMiddleware = require('../middlewares/authMiddleware');
+const { sendError } = require('../utils/responses');
+const { getPagination, validatePet } = require('../utils/validation');
 
 router.use(authMiddleware);
-
-function getPagination(query) {
-    const page = Math.max(parseInt(query.page, 10) || 1, 1);
-    const limit = Math.min(Math.max(parseInt(query.limit, 10) || 10, 1), 100);
-    const offset = (page - 1) * limit;
-
-    return { page, limit, offset };
-}
 
 async function clienteExiste(cliente_id) {
     const [clientes] = await db.query('SELECT id_cliente FROM clientes WHERE id_cliente = ?', [cliente_id]);
@@ -20,10 +14,15 @@ async function clienteExiste(cliente_id) {
 
 router.post('/', async (req, res) => {
     const { nome, especie, raca, cliente_id } = req.body;
+    const errors = validatePet(req.body);
+
+    if (errors.length) {
+        return sendError(res, 400, 'Dados invalidos.', errors);
+    }
 
     try {
         if (!(await clienteExiste(cliente_id))) {
-            return res.status(400).json({ error: 'Cliente informado nao existe.' });
+            return sendError(res, 400, 'Cliente informado nao existe.');
         }
 
         const sql = 'INSERT INTO pets (nome, especie, raca, cliente_id) VALUES (?, ?, ?, ?)';
@@ -35,7 +34,7 @@ router.post('/', async (req, res) => {
         });
     } catch (error) {
         console.error('Erro ao cadastrar pet:', error.message);
-        res.status(500).json({ error: 'Erro ao cadastrar pet no banco.' });
+        return sendError(res, 500, 'Erro ao cadastrar pet no banco.');
     }
 });
 
@@ -97,17 +96,22 @@ router.get('/', async (req, res) => {
         });
     } catch (error) {
         console.error('Erro ao buscar pets:', error.message);
-        res.status(500).json({ error: 'Erro ao buscar pets.' });
+        return sendError(res, 500, 'Erro ao buscar pets.');
     }
 });
 
 router.put('/:id_pet', async (req, res) => {
     const { id_pet } = req.params;
     const { nome, especie, raca, cliente_id } = req.body;
+    const errors = validatePet(req.body);
+
+    if (errors.length) {
+        return sendError(res, 400, 'Dados invalidos.', errors);
+    }
 
     try {
         if (!(await clienteExiste(cliente_id))) {
-            return res.status(400).json({ error: 'Cliente informado nao existe.' });
+            return sendError(res, 400, 'Cliente informado nao existe.');
         }
 
         const sql = `
@@ -118,13 +122,13 @@ router.put('/:id_pet', async (req, res) => {
         const [result] = await db.query(sql, [nome, especie, raca, cliente_id, id_pet]);
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Pet nao encontrado.' });
+            return sendError(res, 404, 'Pet nao encontrado.');
         }
 
         res.json({ message: 'Pet atualizado com sucesso!' });
     } catch (error) {
         console.error('Erro ao atualizar pet:', error.message);
-        res.status(500).json({ error: 'Erro ao atualizar pet.' });
+        return sendError(res, 500, 'Erro ao atualizar pet.');
     }
 });
 
@@ -136,13 +140,13 @@ router.delete('/:id_pet', async (req, res) => {
         const [result] = await db.query(sql, [id_pet]);
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Pet nao encontrado.' });
+            return sendError(res, 404, 'Pet nao encontrado.');
         }
 
         res.json({ message: 'Pet excluido com sucesso!' });
     } catch (error) {
         console.error('Erro ao excluir pet:', error.message);
-        res.status(500).json({ error: 'Erro ao excluir pet.' });
+        return sendError(res, 500, 'Erro ao excluir pet.');
     }
 });
 

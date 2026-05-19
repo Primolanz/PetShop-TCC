@@ -2,18 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const authMiddleware = require('../middlewares/authMiddleware');
+const { sendError } = require('../utils/responses');
+const { getPagination, validateAgendamento } = require('../utils/validation');
 
 router.use(authMiddleware);
-
-const STATUS_VALIDOS = ['Agendado', 'Em Andamento', 'Conclu\u00eddo', 'Cancelado'];
-
-function getPagination(query) {
-    const page = Math.max(parseInt(query.page, 10) || 1, 1);
-    const limit = Math.min(Math.max(parseInt(query.limit, 10) || 10, 1), 100);
-    const offset = (page - 1) * limit;
-
-    return { page, limit, offset };
-}
 
 function getHojeSaoPaulo() {
     const parts = new Intl.DateTimeFormat('en-CA', {
@@ -29,14 +21,6 @@ function getHojeSaoPaulo() {
 
 function dataEhPassada(data_servico) {
     return String(data_servico) < getHojeSaoPaulo();
-}
-
-function dataValida(data_servico) {
-    return /^\d{4}-\d{2}-\d{2}$/.test(String(data_servico));
-}
-
-function horarioValido(horario_servico) {
-    return /^\d{2}:\d{2}(:\d{2})?$/.test(String(horario_servico));
 }
 
 async function petExiste(pet_id) {
@@ -66,18 +50,6 @@ async function horarioOcupado(data_servico, horario_servico, id_agendamento = nu
 async function validarAgendamento({ pet_id, data_servico, horario_servico, status }, id_agendamento = null) {
     const statusFinal = status || 'Agendado';
 
-    if (!STATUS_VALIDOS.includes(statusFinal)) {
-        return 'Status invalido.';
-    }
-
-    if (!dataValida(data_servico)) {
-        return 'Data do servico invalida. Use o formato YYYY-MM-DD.';
-    }
-
-    if (!horarioValido(horario_servico)) {
-        return 'Horario do servico invalido. Use o formato HH:mm:ss.';
-    }
-
     if (!(await petExiste(pet_id))) {
         return 'Pet informado nao existe.';
     }
@@ -95,12 +67,17 @@ async function validarAgendamento({ pet_id, data_servico, horario_servico, statu
 
 router.post('/', async (req, res) => {
     const { pet_id, servico, data_servico, horario_servico, status, observacao } = req.body;
+    const errors = validateAgendamento(req.body);
+
+    if (errors.length) {
+        return sendError(res, 400, 'Dados invalidos.', errors);
+    }
 
     try {
         const erroValidacao = await validarAgendamento(req.body);
 
         if (erroValidacao) {
-            return res.status(400).json({ error: erroValidacao });
+            return sendError(res, 400, erroValidacao);
         }
 
         const sql = `
@@ -123,7 +100,7 @@ router.post('/', async (req, res) => {
         });
     } catch (error) {
         console.error('Erro ao cadastrar agendamento:', error.message);
-        res.status(500).json({ error: 'Erro ao cadastrar agendamento no banco.' });
+        return sendError(res, 500, 'Erro ao cadastrar agendamento no banco.');
     }
 });
 
@@ -194,19 +171,24 @@ router.get('/', async (req, res) => {
         });
     } catch (error) {
         console.error('Erro ao buscar agendamentos:', error.message);
-        res.status(500).json({ error: 'Erro ao buscar agendamentos.' });
+        return sendError(res, 500, 'Erro ao buscar agendamentos.');
     }
 });
 
 router.put('/:id_agendamento', async (req, res) => {
     const { id_agendamento } = req.params;
     const { pet_id, servico, data_servico, horario_servico, status, observacao } = req.body;
+    const errors = validateAgendamento(req.body);
+
+    if (errors.length) {
+        return sendError(res, 400, 'Dados invalidos.', errors);
+    }
 
     try {
         const erroValidacao = await validarAgendamento(req.body, id_agendamento);
 
         if (erroValidacao) {
-            return res.status(400).json({ error: erroValidacao });
+            return sendError(res, 400, erroValidacao);
         }
 
         const sql = `
@@ -225,13 +207,13 @@ router.put('/:id_agendamento', async (req, res) => {
         ]);
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Agendamento nao encontrado.' });
+            return sendError(res, 404, 'Agendamento nao encontrado.');
         }
 
         res.json({ message: 'Agendamento atualizado com sucesso!' });
     } catch (error) {
         console.error('Erro ao atualizar agendamento:', error.message);
-        res.status(500).json({ error: 'Erro ao atualizar agendamento.' });
+        return sendError(res, 500, 'Erro ao atualizar agendamento.');
     }
 });
 
@@ -243,13 +225,13 @@ router.delete('/:id_agendamento', async (req, res) => {
         const [result] = await db.query(sql, [id_agendamento]);
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Agendamento nao encontrado.' });
+            return sendError(res, 404, 'Agendamento nao encontrado.');
         }
 
         res.json({ message: 'Agendamento excluido com sucesso!' });
     } catch (error) {
         console.error('Erro ao excluir agendamento:', error.message);
-        res.status(500).json({ error: 'Erro ao excluir agendamento.' });
+        return sendError(res, 500, 'Erro ao excluir agendamento.');
     }
 });
 
