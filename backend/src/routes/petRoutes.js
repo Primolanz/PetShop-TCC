@@ -5,10 +5,27 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 router.use(authMiddleware);
 
+function getPagination(query) {
+    const page = Math.max(parseInt(query.page, 10) || 1, 1);
+    const limit = Math.min(Math.max(parseInt(query.limit, 10) || 10, 1), 100);
+    const offset = (page - 1) * limit;
+
+    return { page, limit, offset };
+}
+
+async function clienteExiste(cliente_id) {
+    const [clientes] = await db.query('SELECT id_cliente FROM clientes WHERE id_cliente = ?', [cliente_id]);
+    return clientes.length > 0;
+}
+
 router.post('/', async (req, res) => {
     const { nome, especie, raca, cliente_id } = req.body;
 
     try {
+        if (!(await clienteExiste(cliente_id))) {
+            return res.status(400).json({ error: 'Cliente informado nao existe.' });
+        }
+
         const sql = 'INSERT INTO pets (nome, especie, raca, cliente_id) VALUES (?, ?, ?, ?)';
         const [result] = await db.query(sql, [nome, especie, raca, cliente_id]);
 
@@ -24,21 +41,60 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const sql = `
-            SELECT
+        const { page, limit, offset } = getPagination(req.query);
+        const { busca, cliente_id, especie } = req.query;
+        const where = [];
+        const params = [];
+
+        if (busca) {
+            where.push('(pets.nome LIKE ? OR pets.raca LIKE ? OR clientes.nome LIKE ?)');
+            const termo = `%${busca}%`;
+            params.push(termo, termo, termo);
+        }
+
+        if (cliente_id) {
+            where.push('pets.cliente_id = ?');
+            params.push(cliente_id);
+        }
+
+        if (especie) {
+            where.push('pets.especie = ?');
+            params.push(especie);
+        }
+
+        const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+        const fromSql = `
+            FROM pets
+            INNER JOIN clientes ON clientes.id_cliente = pets.cliente_id
+            ${whereSql}
+        `;
+        const [results] = await db.query(
+            `SELECT
                 pets.id_pet,
                 pets.nome,
                 pets.especie,
                 pets.raca,
                 pets.cliente_id,
                 clientes.nome AS nome_cliente
-            FROM pets
-            INNER JOIN clientes ON clientes.id_cliente = pets.cliente_id
-            ORDER BY pets.id_pet DESC
-        `;
-        const [results] = await db.query(sql);
+             ${fromSql}
+             ORDER BY pets.id_pet DESC
+             LIMIT ? OFFSET ?`,
+            [...params, limit, offset]
+        );
+        const [[totalResult]] = await db.query(
+            `SELECT COUNT(*) AS total ${fromSql}`,
+            params
+        );
 
-        res.json(results);
+        res.json({
+            data: results,
+            pagination: {
+                page,
+                limit,
+                total: totalResult.total,
+                totalPages: Math.ceil(totalResult.total / limit)
+            }
+        });
     } catch (error) {
         console.error('Erro ao buscar pets:', error.message);
         res.status(500).json({ error: 'Erro ao buscar pets.' });
@@ -50,6 +106,10 @@ router.put('/:id_pet', async (req, res) => {
     const { nome, especie, raca, cliente_id } = req.body;
 
     try {
+        if (!(await clienteExiste(cliente_id))) {
+            return res.status(400).json({ error: 'Cliente informado nao existe.' });
+        }
+
         const sql = `
             UPDATE pets
             SET nome = ?, especie = ?, raca = ?, cliente_id = ?
