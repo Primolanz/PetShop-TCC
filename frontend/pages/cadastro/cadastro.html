@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="cadastro.css">
+    <link rel="icon" href="../../assets/icons8-pegada-de-gato-64.png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <title>PetShop | Cadastro</title>
+</head>
+
+<body>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <div class="container">
+        <div class="card-cadastro">
+            <div class="icone">
+                <img src="../../assets/icons8-pegada-de-gato-64.png" alt="pata">
+            </div>
+
+            <h3 class="titulo-cadastro">PetShop | System</h3>
+            <p class="subtitulo-cadastro">CADASTRO RESTRITO PARA ADM'S</p>
+
+            <form id="cadastroForm">
+                <label for="nome">NOME</label>
+                <input id="nome" name="nome" type="text" placeholder="Digite seu nome..." required>
+
+                <label for="email">E-MAIL</label>
+                <input id="email" name="email" type="email" placeholder="email@email.com" required>
+
+                <label for="senha">SENHA</label>
+                <input id="senha" name="senha" type="password" placeholder="Digite sua senha..." required>
+
+                <div class="botao">
+                    <button class="botao-cadastro" type="submit">CADASTRAR-SE</button>
+                </div>
+
+                <div class="footer-card">
+                    <p>Já tem uma conta cadastrada? <strong><a href="../login/login.html">faça Login</a></strong></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="cadastro.js"></script>
+</body>
+
+</html>

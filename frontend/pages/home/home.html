@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="home.css">
+    <link rel="icon" href="../../assets/icons8-pegada-de-gato-64.png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <title>PetShop | Painel</title>
+</head>
+
+<body>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <header class="topbar">
+        <div class="brand">
+            <img src="../../assets/icons8-pegada-de-gato-64.png" alt="pata">
+            <div>
+                <h1>PetShop | Sistema</h1>
+                <p>Painel administrativo</p>
+            </div>
+        </div>
+        <button id="logoutBtn" class="btn secundario" type="button">Sair</button>
+    </header>
+
+    <main class="layout">
+        <section id="clientesPanel" class="panel collapsed">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <h2>Clientes</h2>
+                    <button id="toggleClientesBtn" class="collapse-btn" type="button">Abrir</button>
+                </div>
+                <input id="buscaCliente" type="search" placeholder="Buscar cliente">
+            </div>
+
+            <div class="panel-body">
+                <form id="clienteForm" class="grid-form">
+                    <input id="clienteId" type="hidden">
+                    <input id="clienteNome" type="text" placeholder="Nome" required>
+                    <input id="clienteTelefone" type="text" placeholder="Telefone" inputmode="numeric" maxlength="15" required>
+                    <input id="clienteEmail" type="email" placeholder="E-mail">
+                    <input id="clienteCpf" type="text" placeholder="CPF" inputmode="numeric" maxlength="14">
+                    <input id="clienteEndereco" type="text" placeholder="Rua (Endereço)">
+                    <input id="clienteCep" type="text" placeholder="CEP" inputmode="numeric" maxlength="9">
+                    <input id="clienteNumero" type="text" placeholder="Número (Endereço)" inputmode="numeric">
+                    <div class="form-actions">
+                        <button class="btn" type="submit">Salvar cliente</button>
+                        <button id="limparClienteBtn" class="btn secundario" type="button">Limpar</button>
+                    </div>
+                </form>
+
+                <div id="clientesLista" class="lista"></div>
+            </div>
+        </section>
+
+        <section id="petsPanel" class="panel collapsed">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <h2>Pets</h2>
+                    <button id="togglePetsBtn" class="collapse-btn" type="button">Abrir</button>
+                </div>
+                <input id="buscaPet" type="search" placeholder="Buscar pet">
+            </div>
+
+            <div class="panel-body">
+                <form id="petForm" class="grid-form">
+                    <input id="petId" type="hidden">
+                    <input id="petNome" type="text" placeholder="Nome do pet" required>
+                    <input id="petEspecie" type="text" placeholder="Espécie" required>
+                    <input id="petRaca" type="text" placeholder="Raça">
+                    <select id="petCliente" required>
+                        <option value="">Cliente dono</option>
+                    </select>
+                    <div class="form-actions">
+                        <button class="btn" type="submit">Salvar pet</button>
+                        <button id="limparPetBtn" class="btn secundario" type="button">Limpar</button>
+                    </div>
+                </form>
+
+                <div id="petsLista" class="lista"></div>
+            </div>
+        </section>
+
+        <section class="panel full">
+            <div class="panel-header">
+                <h2>Agendamentos</h2>
+                <div class="filters">
+                    <input id="buscaAgendamento" type="search" placeholder="Buscar">
+                    <select id="filtroStatus">
+                        <option value="">Todos</option>
+                        <option value="Agendado">Agendado</option>
+                        <option value="Em Andamento">Em Andamento</option>
+                        <option value="Concluído">Concluído</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                </div>
+            </div>
+
+            <form id="agendamentoForm" class="grid-form agendamento-form">
+                <input id="agendamentoId" type="hidden">
+                <select id="agendamentoPet" required>
+                    <option value="">Pet</option>
+                </select>
+                <select id="agendamentoServico" required>
+                    <option value="">Serviço</option>
+                    <option value="Banho">Banho</option>
+                    <option value="Tosa">Tosa</option>
+                    <option value="Banho e Tosa">Banho e Tosa</option>
+                    <option value="Outros">Outros</option>
+                </select>
+                <input id="agendamentoData" type="date" required>
+                <input id="agendamentoHorario" type="time" required>
+                <select id="agendamentoStatus">
+                    <option value="Agendado">Agendado</option>
+                    <option value="Em Andamento">Em Andamento</option>
+                    <option value="Concluído">Concluído</option>
+                    <option value="Cancelado">Cancelado</option>
+                </select>
+                <input id="agendamentoObservacao" type="text" placeholder="Observação">
+                <div class="form-actions">
+                    <button class="btn" type="submit">Salvar agendamento</button>
+                    <button id="limparAgendamentoBtn" class="btn secundario" type="button">Limpar</button>
+                </div>
+            </form>
+
+            <div id="agendamentosLista" class="lista"></div>
+        </section>
+    </main>
+
+    <script src="home.js"></script>
+</body>
+
+</html>
