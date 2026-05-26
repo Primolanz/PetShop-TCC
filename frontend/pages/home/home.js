@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000';
+const API_URL = 'https://mania-de-bicho.onrender.com';
 const token = localStorage.getItem('petshop_token');
 
 const state = {
