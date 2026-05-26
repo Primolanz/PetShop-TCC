@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000';
+const API_URL = 'https://mania-de-bicho.onrender.com';
 
 const form = document.getElementById('loginForm');
 const toast = document.getElementById('toast');
