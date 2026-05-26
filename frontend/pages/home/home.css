@@ -222,6 +222,11 @@ select:focus{
     background-color: var(--vermelho-escuro);
 }
 
+.btn:disabled{
+    cursor: wait;
+    opacity: 0.72;
+}
+
 .btn.secundario{
     background-color: #111111;
     color: #ffffff;
@@ -270,6 +275,67 @@ select:focus{
 .toast.error{
     border-left-color: #111111;
     background-color: #fff5f5;
+}
+
+.loading-overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background-color: rgba(17, 17, 17, 0.62);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.loading-overlay.show{
+    opacity: 1;
+    pointer-events: all;
+}
+
+.loading-card{
+    width: min(360px, 100%);
+    padding: 2rem;
+    border: 10px solid var(--vermelho);
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: var(--texto);
+    text-align: center;
+    box-shadow: 0 24px 70px rgba(17, 17, 17, 0.3);
+}
+
+.loading-card h2{
+    color: var(--vermelho);
+    font-family: "Great Vibes", cursive;
+    font-size: 2.8rem;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.loading-card p{
+    margin-top: 0.7rem;
+    color: var(--muted);
+    font-weight: 700;
+    line-height: 1.45;
+}
+
+.loading-spinner{
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 1rem;
+    border: 5px solid #f4d5d5;
+    border-top-color: var(--vermelho);
+    border-radius: 50%;
+    animation: girar 0.8s linear infinite;
+}
+
+@keyframes girar{
+    to{
+        transform: rotate(360deg);
+    }
 }
 
 .lista{

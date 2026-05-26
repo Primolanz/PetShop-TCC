@@ -13,6 +13,30 @@ if (!token) {
 
 const $ = (id) => document.getElementById(id);
 let toastTimeout;
+let loadingRequests = 0;
+
+function mostrarLoading(mostrar, texto = 'Conectando ao servidor...') {
+    let loading = $('loadingOverlay');
+
+    if (!loading) {
+        loading = document.createElement('div');
+        loading.id = 'loadingOverlay';
+        loading.className = 'loading-overlay';
+        loading.innerHTML = `
+            <div class="loading-card">
+                <div class="loading-spinner" aria-hidden="true"></div>
+                <h2>Mania de Bicho</h2>
+                <p></p>
+            </div>
+        `;
+        document.body.appendChild(loading);
+    }
+
+    loadingRequests = Math.max(0, loadingRequests + (mostrar ? 1 : -1));
+    loading.querySelector('p').textContent = texto;
+    loading.classList.toggle('show', loadingRequests > 0);
+    loading.setAttribute('aria-hidden', loadingRequests > 0 ? 'false' : 'true');
+}
 
 function mostrarMensagem(texto, sucesso = false) {
     const toast = $('toast');
@@ -86,30 +110,36 @@ function abrirPainel(panelId, buttonId) {
 }
 
 async function apiRequest(path, options = {}) {
-    const response = await fetch(`${API_URL}${path}`, {
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-            ...(options.headers || {})
+    mostrarLoading(true, 'Acordando o servidor. Isso pode levar alguns segundos!');
+
+    try {
+        const response = await fetch(`${API_URL}${path}`, {
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+                ...(options.headers || {})
+            }
+        });
+
+        const text = await response.text();
+        const data = text ? JSON.parse(text) : {};
+
+        if (response.status === 401) {
+            localStorage.removeItem('petshop_token');
+            window.location.href = '../login/login.html';
+            return null;
         }
-    });
 
-    const text = await response.text();
-    const data = text ? JSON.parse(text) : {};
+        if (!response.ok) {
+            const detalhe = data.details ? ` ${data.details.join(' ')}` : '';
+            throw new Error(traduzirErro(`${data.error || 'Erro na requisicao.'}${detalhe}`));
+        }
 
-    if (response.status === 401) {
-        localStorage.removeItem('petshop_token');
-        window.location.href = '../login/login.html';
-        return null;
+        return data;
+    } finally {
+        mostrarLoading(false);
     }
-
-    if (!response.ok) {
-        const detalhe = data.details ? ` ${data.details.join(' ')}` : '';
-        throw new Error(traduzirErro(`${data.error || 'Erro na requisicao.'}${detalhe}`));
-    }
-
-    return data;
 }
 
 function normalizarHorario(valor) {

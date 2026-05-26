@@ -2,7 +2,34 @@ const API_URL = 'https://mania-de-bicho.onrender.com';
 
 const form = document.getElementById('loginForm');
 const toast = document.getElementById('toast');
+const submitButton = form.querySelector('button[type="submit"]');
 let toastTimeout;
+
+function mostrarLoading(mostrar, texto = 'Conectando ao servidor...') {
+    let loading = document.getElementById('loadingOverlay');
+
+    if (!loading) {
+        loading = document.createElement('div');
+        loading.id = 'loadingOverlay';
+        loading.className = 'loading-overlay';
+        loading.innerHTML = `
+            <div class="loading-card">
+                <div class="loading-spinner" aria-hidden="true"></div>
+                <h2>Mania de Bicho</h2>
+                <p></p>
+            </div>
+        `;
+        document.body.appendChild(loading);
+    }
+
+    loading.querySelector('p').textContent = texto;
+    loading.classList.toggle('show', mostrar);
+    loading.setAttribute('aria-hidden', mostrar ? 'false' : 'true');
+
+    if (submitButton) {
+        submitButton.disabled = mostrar;
+    }
+}
 
 function mostrarToast(texto, tipo = 'error') {
     clearTimeout(toastTimeout);
@@ -21,6 +48,8 @@ form.addEventListener('submit', async (event) => {
     const senha = document.getElementById('senha').value;
 
     try {
+        mostrarLoading(true, 'Acordando o servidor. Isso pode levar alguns segundos no plano gratuito.');
+
         const response = await fetch(`${API_URL}/api/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -42,5 +71,7 @@ form.addEventListener('submit', async (event) => {
         }, 700);
     } catch (error) {
         mostrarToast('Nao foi possivel conectar ao servidor.');
+    } finally {
+        mostrarLoading(false);
     }
 });
