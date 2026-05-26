@@ -7,21 +7,25 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="cadastro.css">
-    <link rel="icon" href="../../assets/icons8-pegada-de-gato-64.png">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+    <link rel="icon" href="../../assets/pata-de-cachorro.png">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <title>PetShop | Cadastro</title>
+    <title>Mania de Bicho | Cadastro</title>
 </head>
 
 <body>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
-    <div class="container">
-        <div class="card-cadastro">
-            <div class="icone">
-                <img src="../../assets/icons8-pegada-de-gato-64.png" alt="pata">
+    <main class="container">
+        <section class="card-cadastro" aria-labelledby="cadastroTitle">
+            <div class="brand-card">
+                <img class="pata lateral" src="../../assets/pata-de-cachorro.png" alt="">
+                <div class="brand-text">
+                    <h1 id="cadastroTitle" class="titulo-cadastro">Mania de Bicho</h1>
+                    <p class="service-tag">Pet Shop - Banho e Tosa</p>
+                </div>
+                <img class="pata lateral" src="../../assets/icons8-pegada-de-gato-64.png" alt="">
             </div>
 
-            <h3 class="titulo-cadastro">PetShop | System</h3>
             <p class="subtitulo-cadastro">CADASTRO RESTRITO PARA ADM'S</p>
 
             <form id="cadastroForm">
@@ -39,11 +43,11 @@
                 </div>
 
                 <div class="footer-card">
-                    <p>Já tem uma conta cadastrada? <strong><a href="../login/login.html">faça Login</a></strong></p>
+                    <p>Ja tem uma conta cadastrada? <strong><br><a href="../login/login.html">faça Login</a></strong></p>
                 </div>
             </form>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <script src="cadastro.js"></script>
 </body>

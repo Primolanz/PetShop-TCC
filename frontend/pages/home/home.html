@@ -7,10 +7,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="home.css">
-    <link rel="icon" href="../../assets/icons8-pegada-de-gato-64.png">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+    <link rel="icon" href="../../assets/pata-de-cachorro.png">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <title>PetShop | Painel</title>
+    <title>Mania de Bicho | Painel</title>
 </head>
 
 <body>
@@ -20,8 +20,8 @@
         <div class="brand">
             <img src="../../assets/icons8-pegada-de-gato-64.png" alt="pata">
             <div>
-                <h1>PetShop | Sistema</h1>
-                <p>Painel administrativo</p>
+                <h1>Mania de Bicho</h1>
+                <p>Pet Shop - Banho e Tosa</p>
             </div>
         </div>
         <button id="logoutBtn" class="btn secundario" type="button">Sair</button>
@@ -44,9 +44,9 @@
                     <input id="clienteTelefone" type="text" placeholder="Telefone" inputmode="numeric" maxlength="15" required>
                     <input id="clienteEmail" type="email" placeholder="E-mail">
                     <input id="clienteCpf" type="text" placeholder="CPF" inputmode="numeric" maxlength="14">
-                    <input id="clienteEndereco" type="text" placeholder="Rua (Endereço)">
+                    <input id="clienteEndereco" type="text" placeholder="Rua (Endereco)">
                     <input id="clienteCep" type="text" placeholder="CEP" inputmode="numeric" maxlength="9">
-                    <input id="clienteNumero" type="text" placeholder="Número (Endereço)" inputmode="numeric">
+                    <input id="clienteNumero" type="text" placeholder="Numero (Endereco)" inputmode="numeric">
                     <div class="form-actions">
                         <button class="btn" type="submit">Salvar cliente</button>
                         <button id="limparClienteBtn" class="btn secundario" type="button">Limpar</button>
@@ -70,7 +70,7 @@
                 <form id="petForm" class="grid-form">
                     <input id="petId" type="hidden">
                     <input id="petNome" type="text" placeholder="Nome do pet" required>
-                    <input id="petEspecie" type="text" placeholder="Espécie" required>
+                    <input id="petEspecie" type="text" placeholder="Espécie (cachorro, gato..)" required>
                     <input id="petRaca" type="text" placeholder="Raça">
                     <select id="petCliente" required>
                         <option value="">Cliente dono</option>
@@ -94,7 +94,7 @@
                         <option value="">Todos</option>
                         <option value="Agendado">Agendado</option>
                         <option value="Em Andamento">Em Andamento</option>
-                        <option value="Concluído">Concluído</option>
+                        <option value="Conclu&iacute;do">Conclu&iacute;do</option>
                         <option value="Cancelado">Cancelado</option>
                     </select>
                 </div>
@@ -106,7 +106,7 @@
                     <option value="">Pet</option>
                 </select>
                 <select id="agendamentoServico" required>
-                    <option value="">Serviço</option>
+                    <option value="">Servico</option>
                     <option value="Banho">Banho</option>
                     <option value="Tosa">Tosa</option>
                     <option value="Banho e Tosa">Banho e Tosa</option>
@@ -117,10 +117,10 @@
                 <select id="agendamentoStatus">
                     <option value="Agendado">Agendado</option>
                     <option value="Em Andamento">Em Andamento</option>
-                    <option value="Concluído">Concluído</option>
+                    <option value="Conclu&iacute;do">Conclu&iacute;do</option>
                     <option value="Cancelado">Cancelado</option>
                 </select>
-                <input id="agendamentoObservacao" type="text" placeholder="Observação">
+                <input id="agendamentoObservacao" type="text" placeholder="Observacao">
                 <div class="form-actions">
                     <button class="btn" type="submit">Salvar agendamento</button>
                     <button id="limparAgendamentoBtn" class="btn secundario" type="button">Limpar</button>
